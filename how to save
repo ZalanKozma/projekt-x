@@ -1,0 +1,203 @@
+Automatikus mentésnél a játék bizonyos időközönként magától elmenti az adatokat.
+
+Java-ban ezt általában:
+
+* időzítővel (`Timer`)
+* vagy külön szállal (`Thread`)
+  csinálják.
+
+A legegyszerűbb megoldás a `Timer`.
+
+---
+
+# Egyszerű automatikus mentés
+
+## Példa
+
+5 másodpercenként menti a játékot.
+
+```java id="xg2jlp"
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class Game {
+
+    static int pont = 0;
+
+    public static void main(String[] args) {
+
+        Timer timer = new Timer();
+
+        // Automatikus mentés 5 másodpercenként
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                saveGame();
+            }
+
+        }, 0, 5000);
+
+        // Játék szimuláció
+        while (true) {
+
+            pont++;
+
+            System.out.println("Pont: " + pont);
+
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void saveGame() {
+
+        try {
+
+            FileWriter writer = new FileWriter("save.txt");
+
+            writer.write("Pont=" + pont);
+
+            writer.close();
+
+            System.out.println("Automatikus mentés!");
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+---
+
+# Hogyan működik?
+
+Ez a rész:
+
+```java id="6mp2xp"
+timer.schedule(task, 0, 5000);
+```
+
+jelenti:
+
+| Paraméter | Jelentés              |
+| --------- | --------------------- |
+| `0`       | azonnal indul         |
+| `5000`    | 5000 ms = 5 másodperc |
+
+---
+
+# Valódi játékban mit mentenek?
+
+Általában:
+
+```java id="ex9wmh"
+playerX
+playerY
+hp
+inventory
+score
+currentLevel
+```
+
+---
+
+# Jobb megoldás: külön Save osztály
+
+Nagyobb projektnél így szokás:
+
+```java id="c2vqpb"
+public class SaveSystem {
+
+    public static void save(Player p) {
+
+    }
+
+    public static Player load() {
+
+    }
+}
+```
+
+Így tisztább marad a játék kódja.
+
+---
+
+# Fontos probléma — lag
+
+Ha túl gyakran mentesz:
+
+* laggolhat a játék
+* akadozhat
+
+Ezért általában:
+
+* 30 mp
+* 1 perc
+* checkpoint után
+* pályaváltáskor
+
+szoktak menteni.
+
+---
+
+# Profibb megoldás: mentés kilépéskor is
+
+Példa:
+
+```java id="65d6q9"
+Runtime.getRuntime().addShutdownHook(
+    new Thread(() -> {
+        saveGame();
+    })
+);
+```
+
+Ez lefut amikor bezárod a játékot.
+
+---
+
+# Játékokban tipikus rendszer
+
+## Automatikus mentés:
+
+* időnként
+* checkpointnál
+* pálya végén
+
+## Manuális mentés:
+
+* Save gomb
+* Menü
+
+A kettőt együtt használják.
+
+---
+
+# Ha Swing vagy JavaFX játékot csinálsz
+
+akkor még jobb:
+
+* külön thread
+* JSON mentés
+* serialization
+* async save
+
+mert az UI nem fagy le.
+
+---
+
+Ha akarod, megmutathatom:
+
+* hogyan ments teljes inventoryt,
+* hogyan csinálj több mentési slotot,
+* hogyan ments JSON-ba,
+* vagy hogyan csinálnak Minecraft-szerű világmentést Java-ban.
