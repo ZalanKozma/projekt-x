@@ -1,0 +1,29 @@
+I'd be happy to help you understand what a CLI is!
+
+**CLI stands for Command Line Interface.** It's a text-based way to interact with a computer or software application by typing commands into a terminal or console window.
+
+## Key Characteristics:
+
+- **Text-based**: You type commands and press Enter to execute them, rather than clicking buttons in a graphical interface
+- **Powerful**: CLIs often provide more direct access to system functions and can be more efficient for advanced users
+- **Scriptable**: Commands can be automated by writing scripts
+- **Lightweight**: CLIs use fewer system resources compared to graphical interfaces
+
+## Common Examples:
+
+- **Terminal/Command Prompt**: The default CLI on most operating systems (Bash on Linux/Mac, PowerShell on Windows)
+- **Git CLI**: Used to manage version control (`git commit`, `git push`, etc.)
+- **npm/yarn**: Package managers for JavaScript
+- **Docker CLI**: For managing containers
+- **GitHub CLI**: For interacting with GitHub from the command line
+
+## Basic Example:
+
+Instead of clicking through folders and files in a file manager, you might use:
+```
+cd my-project
+ls
+cat README.md
+```
+
+CLIs are especially popular among developers because they enable faster workflows and can be integrated into automation tools and scripts. Is there a specific CLI or tool you'd like to learn more about?
