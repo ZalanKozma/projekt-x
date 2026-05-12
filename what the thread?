@@ -1,0 +1,248 @@
+A threading (helyesen: **threading**, Java-ban: **multithreading**) azt jelenti, hogy a program egyszerre több dolgot tud futtatni.
+
+A thread = „szál”.
+
+---
+
+# Egyszerűen elképzelve
+
+Normál program:
+
+```text
+1 feladat → aztán következő → aztán következő
+```
+
+Threading:
+
+```text
+Több feladat egyszerre fut
+```
+
+Például játékban:
+
+| Thread | Feladat               |
+| ------ | --------------------- |
+| 1      | játék futtatása       |
+| 2      | zene                  |
+| 3      | automatikus mentés    |
+| 4      | AI                    |
+| 5      | hálózat / multiplayer |
+
+---
+
+# Miért fontos játékoknál?
+
+Ha minden egy szálon fut:
+
+* mentés közben megállhat a játék
+* laggolhat
+* lefagyhat az UI
+
+Threadinggel:
+
+* a játék megy tovább
+* közben háttérben ment
+* vagy tölt be dolgokat
+
+---
+
+# Egyszerű Thread példa
+
+```java id="jlwmvv"
+public class Main {
+
+    public static void main(String[] args) {
+
+        Thread t = new Thread(() -> {
+
+            for (int i = 1; i <= 5; i++) {
+
+                System.out.println("Másik thread: " + i);
+
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        t.start();
+
+        for (int i = 1; i <= 5; i++) {
+
+            System.out.println("Fő thread: " + i);
+
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+---
+
+# Mi történik itt?
+
+Két szál fut egyszerre:
+
+## Main thread
+
+A program fő része.
+
+## Másik thread
+
+A háttérfeladat.
+
+Ezért a kiírások keverednek.
+
+---
+
+# Fontos
+
+## `start()` ≠ `run()`
+
+HELYES:
+
+```java id="9qy5s2"
+t.start();
+```
+
+ROSSZ:
+
+```java id="ztq13n"
+t.run();
+```
+
+A `start()` indít új threadet.
+
+---
+
+# Thread.sleep()
+
+```java id="9z6o2n"
+Thread.sleep(1000);
+```
+
+= vár 1 másodpercet.
+
+---
+
+# Játékokban tipikus threadek
+
+## Game loop
+
+```text
+FPS
+mozgás
+ütközés
+render
+```
+
+## Hang
+
+Háttérben fut.
+
+## Mentés
+
+Autosave.
+
+## Betöltés
+
+Loading screen alatt.
+
+---
+
+# Veszély: race condition
+
+Ha két thread egyszerre módosít adatot:
+
+```java id="v1sz5w"
+money++;
+```
+
+problémák lehetnek.
+
+Ezért van:
+
+* `synchronized`
+* lockok
+* concurrent collectionök
+
+De kezdőként ettől még nem kell félni.
+
+---
+
+# Modern Java megoldás
+
+Ma inkább ezt használják:
+
+```java id="ghm5ks"
+ExecutorService
+```
+
+mert jobb, biztonságosabb.
+
+Példa:
+
+```java id="rl3vrq"
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        ExecutorService executor =
+                Executors.newFixedThreadPool(2);
+
+        executor.submit(() -> {
+            System.out.println("Háttérfeladat");
+        });
+
+        executor.shutdown();
+    }
+}
+```
+
+---
+
+# Egyszerű játékos példa
+
+## Thread nélkül
+
+```text
+Játék megáll mentéskor
+```
+
+## Threaddel
+
+```text
+Játék fut → háttérben ment
+```
+
+---
+
+# Amit érdemes először megtanulni
+
+1. `Thread`
+2. `Runnable`
+3. `sleep()`
+4. `Timer`
+5. `ExecutorService`
+
+Ez már elég játékokhoz.
+
+---
+
+Ha szeretnéd, megmutathatom:
+
+* hogyan készül egy Java game loop,
+* hogyan működik az FPS rendszer,
+* hogyan csinálnak külön render threadet,
+* vagy hogyan készíts multithreadelt Java játékot.
